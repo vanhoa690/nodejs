@@ -1,6 +1,12 @@
 import express from "express";
 const app = express();
 
+// Middleware để xử lý JSON
+app.use(express.json());
+
+// Middleware để xử lý dữ liệu url-encoded
+app.use(express.urlencoded({ extended: true }));
+
 app.get("/", function (req, res) {
   res.send("Hello NodeJS");
 });
