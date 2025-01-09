@@ -1,6 +1,12 @@
 import express from "express";
+import cors from "cors";
 
 const app = express();
+app.use(cors());
+
+// Middleware để phân tích JSON và form data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", function (req, res) {
   res.send("Hello NodeJS");
@@ -8,7 +14,6 @@ app.get("/", function (req, res) {
 
 app.get("/products", function (req, res) {
   const query = req.query;
-  console.log(query);
   const priceMin = req.query.priceMin;
   const priceMax = req.query.priceMax;
 
@@ -56,6 +61,11 @@ app.get("/products/:id", function (req, res) {
     return res.status(404).json({ message: "Product Not Found" });
   }
   res.status(200).json(product);
+});
+
+app.post("/products", function (req, res) {
+  console.log("req body", req.body);
+  res.send("Hello Product Add");
 });
 
 app.get("/login", function (req, res) {
