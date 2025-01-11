@@ -9,10 +9,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", function (req, res) {
-  res.send("hello Homepage");
-});
-
 app.use("/", router);
 
 if (import.meta.env.PROD) app.listen(3000);
