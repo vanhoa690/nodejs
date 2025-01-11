@@ -9,6 +9,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", function (req, res) {
+  res.send("hello Homepage");
+});
+app.get("/products", function (req, res) {
   const query = req.query;
   const priceMin = req.query.priceMin;
   const priceMax = req.query.priceMax;
@@ -33,7 +36,7 @@ app.get("/", function (req, res) {
   }
   res.status(200).json(products);
 });
-app.get("/:id", function (req, res) {
+app.get("/products/:id", function (req, res) {
   const id = req.params.id;
   //data product list
   const products = [
@@ -54,14 +57,14 @@ app.get("/:id", function (req, res) {
   }
   res.status(200).json(product);
 });
-app.post("/", function (req, res) {
+app.post("/products", function (req, res) {
   console.log("req body", req.body);
   res.send("Hello Product Add");
 });
-app.put("/:id", function (req, res) {
+app.put("/products/:id", function (req, res) {
   res.send("Hello Product Update");
 });
-app.delete("/:id", function (req, res) {
+app.delete("/products/:id", function (req, res) {
   res.send("Hello Product Delete");
 });
 
