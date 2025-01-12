@@ -21,8 +21,38 @@ function getProductDetail(req, res) {
   res.json(product);
 }
 
-function createProduct(req, res) {}
-function updateProduct(req, res) {}
+function createProduct(req, res) {
+  const { name, price } = req.body;
+  // validate
+  if (!name || !price) {
+    return res.status(400).json({ message: "Name and price is required" });
+  }
+  const newProduct = {
+    id: products.length + 1,
+    ...req.body,
+  };
+  products.push(newProduct);
+
+  res.json(newProduct);
+}
+
+function updateProduct(req, res) {
+  // tim kiem product co id == :id
+  const { id } = req.params;
+  const product = products.find((p) => p.id == id);
+
+  if (!product) {
+    return res.status(404).json({ message: "Product Not Found" });
+  }
+
+  // update name, price trong product
+  const { name, price } = req.body;
+
+  if (name) product.name = name;
+  if (price) product.price = price;
+
+  res.json(product);
+}
 function deleteProduct(req, res) {}
 
 export {
