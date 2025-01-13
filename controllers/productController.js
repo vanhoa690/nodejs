@@ -1,12 +1,17 @@
+import ProductModel from "../models/productModel";
+
 // name convention: camelCase
 const products = [
   { id: 1, name: "Product 1", price: 100 },
   { id: 2, name: "Product 2", price: 200 },
 ];
 
-function getAllProduct(req, res) {
-  // filter req.query
-  res.json(products);
+async function getAllProduct(req, res) {
+  try {
+    const productAll = await ProductModel.find();
+    console.log(productAll);
+    res.json(productAll);
+  } catch (error) {}
 }
 
 function getProductDetail(req, res) {
