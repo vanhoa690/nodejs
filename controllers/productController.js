@@ -14,7 +14,7 @@ function getProductDetail(req, res) {
   const product = products.find((p) => p.id == id);
 
   if (!product) {
-    return res.staus(404).json({ message: "Product Not Found" });
+    return res.status(404).json({ message: "Product Not Found" });
   }
   res.json(product);
 }
@@ -41,7 +41,7 @@ function updateProduct(req, res) {
   const product = products.find((p) => p.id == id);
 
   if (!product) {
-    return res.staus(404).json({ message: "Product Not Found" });
+    return res.status(404).json({ message: "Product Not Found" });
   }
 
   const { name, price } = req.body;
@@ -56,10 +56,8 @@ function deleteProduct(req, res) {
   const { id } = req.params;
   const productIndex = products.findIndex((p) => p.id == id);
 
-  console.log({ productIndex });
-
   if (productIndex == -1) {
-    return res.staus(404).json({ message: "Product Not Found" });
+    return res.status(404).json({ message: "Product Not Found" });
   }
   products.splice(productIndex, 1);
 
