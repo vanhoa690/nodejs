@@ -20,9 +20,8 @@ function getProductDetail(req, res) {
 }
 
 function createProduct(req, res) {
-  console.log(req.body);
   const { name, price } = req.body;
-  //validate
+
   if (!name || !price) {
     return res.status(400).json({ message: "Name and Price is Required" });
   }
@@ -38,11 +37,33 @@ function createProduct(req, res) {
 }
 
 function updateProduct(req, res) {
-  res.send("updateProduct");
+  const { id } = req.params;
+  const product = products.find((p) => p.id == id);
+
+  if (!product) {
+    return res.staus(404).json({ message: "Product Not Found" });
+  }
+
+  const { name, price } = req.body;
+
+  if (name) product.name = name;
+  if (price) product.price = price;
+
+  res.json(product);
 }
 
 function deleteProduct(req, res) {
-  res.send("deleteProduct");
+  const { id } = req.params;
+  const productIndex = products.findIndex((p) => p.id == id);
+
+  console.log({ productIndex });
+
+  if (productIndex == -1) {
+    return res.staus(404).json({ message: "Product Not Found" });
+  }
+  products.splice(productIndex, 1);
+
+  res.json({ message: "Xoa san pham thanh cong" });
 }
 
 export {
