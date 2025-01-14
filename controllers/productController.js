@@ -52,7 +52,14 @@ function updateProduct(req, res) {
 }
 
 function deleteProduct(req, res) {
-  res.send("deleteProduct");
+  const { id } = req.params;
+  const productIndex = products.findIndex((p) => p.id == id);
+  // not found -1
+  if (productIndex == -1) {
+    return res.status(404).json({ message: "Product Not Found" });
+  }
+  products.splice(productIndex, 1);
+  res.json({ message: "Product deleted successfully" });
 }
 
 export {
