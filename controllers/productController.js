@@ -17,14 +17,20 @@ async function getAllProducts(req, res) {
   }
 }
 
-function getProductDetail(req, res) {
-  const { id } = req.params;
-  const product = products.find((p) => p.id == id);
+async function getProductDetail(req, res) {
+  try {
+    const { id } = req.params;
 
-  if (!product) {
-    return res.status(404).json({ message: "Product Not Found" });
+    const product = await productModel.findById(id); //SQL: select * form products where product.id === id
+
+    if (!product) {
+      return res.status(404).json({ message: "Product Not Found" });
+    }
+    res.json(product);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: "Server Error" });
   }
-  res.json(product);
 }
 
 function createProduct(req, res) {
