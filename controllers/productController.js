@@ -1,12 +1,20 @@
 // Demo Mock data (sử dụng nếu chưa có database)
 
+import productModel from "../models/productModel";
+
 const products = [
   { id: 1, name: "Product 1", price: 100 },
   { id: 2, name: "Product 2", price: 200 },
 ];
 
-function getAllProducts(req, res) {
-  res.json(products);
+async function getAllProducts(req, res) {
+  try {
+    const productList = await productModel.find(); // SQL: select * from products
+    res.json(productList);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: "Server Error" });
+  }
 }
 
 function getProductDetail(req, res) {
