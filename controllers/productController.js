@@ -66,16 +66,23 @@ function updateProduct(req, res) {
   res.json(product);
 }
 
-function deleteProduct(req, res) {
-  const { id } = req.params;
-  const productIndex = products.findIndex((p) => p.id == id);
+async function deleteProduct(req, res) {
+  try {
+    const { id } = req.params;
 
-  if (productIndex == -1) {
-    return res.status(404).json({ message: "Product Not Found" });
+    const deleteProduct = await productModel.findByIdAndDelete(id); //find(id) + delete Product
+
+    console.log(deleteProduct);
+
+    if (!deleteProduct) {
+      return res.status(404).json({ message: "Product Not Found" });
+    }
+
+    res.json({ message: "Xoa san pham thanh cong" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: "Server Error" });
   }
-  products.splice(productIndex, 1);
-
-  res.json({ message: "Xoa san pham thanh cong" });
 }
 
 export {
