@@ -9,6 +9,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// chay connect DB truoc routes
+connectMongoDB("mongodb://127.0.0.1:27017/db_nodejs_ca2");
+
 app.use("/", router);
 
 if (import.meta.env.PROD) app.listen(3000);
