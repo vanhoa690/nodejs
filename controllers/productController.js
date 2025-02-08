@@ -7,12 +7,7 @@ const products = [
 ];
 
 async function getAllProducts(req, res) {
-  try {
-    const productList = await productModel.find();
-    res.json(productList);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  res.json(products);
 }
 
 function getProductDetail(req, res) {
