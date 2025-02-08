@@ -15,13 +15,17 @@ async function getAllProducts(req, res) {
   }
 }
 
-function getProductDetail(req, res) {
-  const { id } = req.params;
-  const product = products.find((product) => product.id == id);
-  if (!product) {
-    return res.status(404).json({ message: "Product Not Found" });
+async function getProductDetail(req, res) {
+  try {
+    const { id } = req.params;
+    const product = productModel.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product Not Found" });
+    }
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  res.json(product);
 }
 
 function createProduct(req, res) {
