@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import router from "./routes";
 import connectMongoDB from "./config/db";
+import { seedProducts } from "./config/seeder";
 
 const app = express();
 app.use(cors());
@@ -12,6 +13,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // chay connect DB truoc routes
 connectMongoDB("mongodb://127.0.0.1:27017/db_nodejs_ca2");
+
+// chay seeding products
+seedProducts();
 
 app.use("/", router);
 
