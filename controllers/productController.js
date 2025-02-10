@@ -66,7 +66,7 @@ function deleteProduct(req, res) {
   const productIndex = products.findIndex((p) => p.id == id);
   console.log({ productIndex });
   if (productIndex == -1) {
-    return res.staus(404).json({ message: "Product Not Found" });
+    return res.status(404).json({ message: "Product Not Found" });
   }
   products.splice(productIndex, 1);
   res.json({ message: "Xoa san pham thanh cong" });
