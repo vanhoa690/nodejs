@@ -7,18 +7,20 @@ const products = [
 ];
 
 async function getAllProducts(req, res) {
-  try {
-    const productList = await productModel.find();
-    res.json(productList);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  res.json(products);
+  // try {
+  //   const productList = await productModel.find();
+  //   res.json(productList);
+  // } catch (error) {
+  //   res.status(500).json({ message: error.message });
+  // }
 }
 
 async function getProductDetail(req, res) {
   try {
     const { id } = req.params;
-    const product = await productModel.findById(id);
+    // const product = await productModel.findById(id);
+    const product = products.find((p) => p.id == id);
     if (!product) {
       return res.status(404).json({ message: "Product Not Found" });
     }
