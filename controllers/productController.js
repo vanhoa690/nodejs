@@ -28,21 +28,18 @@ async function getProductDetail(req, res) {
   }
 }
 
-function createProduct(req, res) {
-  const { name, price } = req.body;
+async function createProduct(req, res) {
+  try {
+    const { name, price } = req.body;
 
-  if (!name || !price) {
-    return res.status(400).json({ message: "Name and Price is Required" });
+    if (!name || !price) {
+      return res.status(400).json({ message: "Name and Price is Required" });
+    }
+    const productCreated = await productModel.create(req.body);
+    res.status(201).json(productCreated);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-
-  const newProduct = {
-    id: products.length + 1,
-    name,
-    price,
-  };
-  products.push(newProduct);
-
-  res.json(newProduct);
 }
 
 function updateProduct(req, res) {
