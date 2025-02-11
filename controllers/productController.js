@@ -7,20 +7,18 @@ const products = [
 ];
 
 async function getAllProducts(req, res) {
-  res.json(products);
-  // try {
-  //   const productList = await productModel.find();
-  //   res.json(productList);
-  // } catch (error) {
-  //   res.status(500).json({ message: error.message });
-  // }
+  try {
+    const productList = await productModel.find();
+    res.json(productList);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 }
 
 async function getProductDetail(req, res) {
   try {
     const { id } = req.params;
-    // const product = await productModel.findById(id);
-    const product = products.find((p) => p.id == id);
+    const product = await productModel.findById(id);
     if (!product) {
       return res.status(404).json({ message: "Product Not Found" });
     }
@@ -63,15 +61,18 @@ function updateProduct(req, res) {
   res.json(product);
 }
 
-function deleteProduct(req, res) {
-  const { id } = req.params;
-  const productIndex = products.findIndex((p) => p.id == id);
-  console.log({ productIndex });
-  if (productIndex == -1) {
-    return res.status(404).json({ message: "Product Not Found" });
+async function deleteProduct(req, res) {
+  try {
+    const { id } = req.params;
+    const product = await productModel.findByIdAndDelete(id); // tim kiem id -> xoa
+    console.log(product);
+    if (!product) {
+      return res.status(404).json({ message: "Product Not Found" });
+    }
+    res.json({ message: "Xoa san pham thanh cong" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  products.splice(productIndex, 1);
-  res.json({ message: "Xoa san pham thanh cong" });
 }
 
 export {
