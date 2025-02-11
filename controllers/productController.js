@@ -42,20 +42,17 @@ async function createProduct(req, res) {
   }
 }
 
-function updateProduct(req, res) {
-  const { id } = req.params;
-  const product = products.find((p) => p.id == id);
-
-  if (!product) {
-    return res.status(404).json({ message: "Product Not Found" });
+async function updateProduct(req, res) {
+  try {
+    const { id } = req.params;
+    const product = await productModel.findByIdAndUpdate(id, req.body);
+    if (!product) {
+      return res.status(404).json({ message: "Product Not Found" });
+    }
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-
-  const { name, price } = req.body;
-
-  if (name) product.name = name;
-  if (price) product.price = price;
-
-  res.json(product);
 }
 
 async function deleteProduct(req, res) {
