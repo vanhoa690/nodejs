@@ -1,11 +1,5 @@
 import productModel from "../models/productModel";
 
-// Demo Mock data (sử dụng nếu chưa có database)
-const products = [
-  { id: 1, name: "Product 1", price: 100 },
-  { id: 2, name: "Product 2", price: 200 },
-];
-
 async function getAllProducts(req, res) {
   try {
     const productList = await productModel.find();
