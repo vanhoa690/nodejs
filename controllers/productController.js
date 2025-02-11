@@ -29,6 +29,8 @@ async function createProduct(req, res) {
     if (!name || !price) {
       return res.status(400).json({ message: "Name and Price is Required" });
     }
+    // const newProduct = new productModel(req.body);
+    // const productCreated = await newProduct.save();
     const productCreated = await productModel.create(req.body);
     res.status(201).json(productCreated);
   } catch (error) {
@@ -40,7 +42,7 @@ async function updateProduct(req, res) {
   try {
     const { id } = req.params;
     const product = await productModel.findByIdAndUpdate(id, req.body, {
-      new: true,
+      new: true, // Trả về dữ liệu mới sau khi cập nhật
     });
     if (!product) {
       return res.status(404).json({ message: "Product Not Found" });
