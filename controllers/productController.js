@@ -29,6 +29,7 @@ async function createProduct(req, res) {
     if (!name || !price) {
       return res.status(400).json({ message: "Name and Price is Required" });
     }
+
     // const newProduct = new productModel(req.body);
     // const productCreated = await newProduct.save();
     const productCreated = await productModel.create(req.body);
