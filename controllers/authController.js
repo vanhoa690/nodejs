@@ -28,7 +28,9 @@ async function register(req, res) {
       password: hashedPassword,
     };
     const userCreated = await userModel.create(newUser);
-    res.json(userCreated);
+
+    // remove password response
+    res.json({ ...userCreated.toObject(), password: undefined });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
