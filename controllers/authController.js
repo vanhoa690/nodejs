@@ -1,4 +1,5 @@
 import userModel from "../models/userModel";
+import bcrypt from "bcryptjs";
 
 async function register(req, res) {
   try {
@@ -15,10 +16,13 @@ async function register(req, res) {
       return res.status(400).json({ message: "Password min 6 character" });
     }
 
+    // Mã hóa mật khẩu
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // them user
     const newUser = {
       email,
-      password,
+      password: hashedPassword,
     };
 
     const userCreated = await userModel.create(newUser);
