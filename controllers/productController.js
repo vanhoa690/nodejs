@@ -32,6 +32,7 @@ async function createProduct(req, res) {
 
     // const newProduct = new productModel(req.body);
     // const productCreated = await newProduct.save();
+
     const productCreated = await productModel.create(req.body);
     res.status(201).json(productCreated);
   } catch (error) {
