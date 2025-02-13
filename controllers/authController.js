@@ -13,7 +13,11 @@ async function register(req, res) {
     if (password.length < 6) {
       return res.status(400).json({ message: "Password min 6 character" });
     }
-
+    // Kiểm tra xem email đã tồn tại chưa
+    const user = await userModel.findOne({ email });
+    if (user) {
+      return res.status(400).json({ message: "Email existed" });
+    }
     // Mã hóa mật khẩu
     const hashedPassword = await bcrypt.hash(password, 10);
     console.log(hashedPassword);
