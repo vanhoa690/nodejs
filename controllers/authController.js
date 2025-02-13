@@ -16,8 +16,8 @@ async function register(req, res) {
       return res.status(400).json({ message: "Password min 6 character" });
     }
 
+    // Kiểm tra xem email đã tồn tại chưa
     const user = await userModel.findOne({ email });
-
     if (user) {
       return res.status(400).json({ message: "User existed" });
     }
@@ -32,7 +32,8 @@ async function register(req, res) {
 
     const userCreated = await userModel.create(newUser);
 
-    res.json(userCreated);
+    // remove password in res
+    res.json({ ...userCreated.toObject(), password: undefined });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
