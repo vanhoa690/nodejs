@@ -16,6 +16,11 @@ async function register(req, res) {
       return res.status(400).json({ message: "Password min 6 character" });
     }
 
+    const user = await userModel.findOne({ email });
+
+    if (user) {
+      return res.status(400).json({ message: "User existed" });
+    }
     // Mã hóa mật khẩu
     const hashedPassword = await bcrypt.hash(password, 10);
 
