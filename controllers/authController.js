@@ -52,8 +52,14 @@ async function login(req, res) {
     // Kiểm tra xem email đã tồn tại chưa
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
+    // Kiểm tra mật khẩu
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+    console.log({ isMatch });
 
     res.json("API Login");
   } catch (error) {
