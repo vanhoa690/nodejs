@@ -36,8 +36,28 @@ async function register(req, res) {
   }
 }
 
-function login(req, res) {
-  res.json("API Login");
+async function login(req, res) {
+  try {
+    const { email, password } = req.body;
+    //Kiem tra du lieu hop le
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and Password is Required" });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password min 6 character" });
+    }
+    // Tìm user theo email
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    res.json("API Login");
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 }
 
 export { register, login };
