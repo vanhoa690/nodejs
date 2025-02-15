@@ -1,6 +1,5 @@
 import userModel from "../models/userModel";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 async function register(req, res) {
   try {
@@ -37,4 +36,8 @@ async function register(req, res) {
   }
 }
 
-export { register };
+function login(req, res) {
+  res.json("API Login");
+}
+
+export { register, login };
