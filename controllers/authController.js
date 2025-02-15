@@ -36,4 +36,8 @@ async function register(req, res) {
   }
 }
 
-export { register };
+function login(req, res) {
+  res.json("API Login");
+}
+
+export { register, login };
