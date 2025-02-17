@@ -1,11 +1,9 @@
 import express from "express";
-import cors from "cors";
 import router from "./routes";
 import connectMongoDB from "./config/db";
 import { seedProducts } from "./config/seeder";
 
 const app = express();
-app.use(cors());
 
 // Middleware để phân tích JSON và form data
 app.use(express.json());
