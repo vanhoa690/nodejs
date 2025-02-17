@@ -59,7 +59,6 @@ async function deleteProduct(req, res) {
   try {
     const { id } = req.params;
     const product = await productModel.findByIdAndDelete(id); // tim kiem id -> xoa
-    console.log(product);
     if (!product) {
       return res.status(404).json({ message: "Product Not Found" });
     }
