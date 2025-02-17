@@ -3,8 +3,8 @@ import userModel from "../models/userModel";
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.header("Authorization").split(" ")[1];
-    console.log({ token });
+    const token = req.header("Authorization")?.split(" ")[1];
+
     if (!token) {
       return res
         .status(401)
@@ -12,11 +12,10 @@ const authMiddleware = async (req, res, next) => {
     }
     const decoded = jwt.verify(token, "hoadv21");
 
-    console.log({ decoded });
-
     const user = await userModel.findById(decoded.id);
-
-    console.log({ user });
+    if (!user) {
+      return res.status(404).json({ message: "User Not Found" });
+    }
 
     next();
   } catch (error) {
