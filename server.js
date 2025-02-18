@@ -16,7 +16,7 @@ connectMongoDB("mongodb://127.0.0.1:27017/db_nodejs_ca2");
 // chay seeding products
 // seedProducts();
 
-app.use("/", router);
+app.use("/api", router);
 
 if (import.meta.env.PROD) app.listen(3000);
 
