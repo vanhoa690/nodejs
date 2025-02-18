@@ -3,7 +3,11 @@ import productModel from "../models/productModel";
 async function getAllProducts(req, res) {
   try {
     const productList = await productModel.find();
-    res.json(productList);
+    res.json({
+      message: "Ok",
+      statusCode: 200,
+      data: productList,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -16,7 +20,11 @@ async function getProductDetail(req, res) {
     if (!product) {
       return res.status(404).json({ message: "Product Not Found" });
     }
-    res.json(product);
+    res.json({
+      message: "Ok",
+      statusCode: 200,
+      data: product,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
