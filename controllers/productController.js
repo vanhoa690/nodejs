@@ -1,4 +1,5 @@
 import productModel from "../models/productModel";
+import { productValidateSchema } from "../validation/product";
 
 async function getAllProducts(req, res) {
   try {
@@ -26,8 +27,12 @@ async function createProduct(req, res) {
   try {
     const { name, price } = req.body;
 
-    if (!name || !price) {
-      return res.status(400).json({ message: "Name and Price is Required" });
+    const { error } = productValidateSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      const errorsMessage = error.details.map((err) => err.message);
+      return res.status(400).json({ message: errorsMessage });
     }
     // const newProduct = new productModel(req.body);
     // const productCreated = await newProduct.save();
