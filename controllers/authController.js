@@ -1,20 +1,19 @@
 import userModel from "../models/userModel";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { registerSchema } from "../validation/auth";
 
 async function register(req, res) {
   try {
     const { email, password } = req.body;
     //Kiem tra du lieu hop le
-    const { error } = registerSchema.validate(req.body, {
-      abortEarly: false,
-    });
-    if (error) {
-      const errorsMessage = error.details.map((err) => err.message);
-      return res.status(400).json({ message: errorsMessage });
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and Password is Required" });
     }
-
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password min 6 character" });
+    }
     const user = await userModel.findOne({ email });
     if (user) {
       return res.status(400).json({ message: "Email existed" });
