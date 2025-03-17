@@ -22,7 +22,9 @@ function sortObject(obj) {
 }
 
 vnpayRouter.get("/create_payment_url", (req, res) => {
-  let ipAddr = req.ip;
+  console.log(req.ip);
+
+  let ipAddr = req.ip === "::1" ? "127.0.0.1" : req.ip;
   let tmnCode = config.vnp_TmnCode;
   let secretKey = config.vnp_HashSecret;
   let vnpUrl = config.vnp_Url;
@@ -45,11 +47,12 @@ vnpayRouter.get("/create_payment_url", (req, res) => {
     vnp_TxnRef: orderId,
     vnp_OrderInfo: orderInfo,
     vnp_OrderType: "billpayment",
-    vnp_Amount: amount * 100,
+    vnp_Amount: Number(amount),
     vnp_ReturnUrl: returnUrl,
     vnp_IpAddr: ipAddr,
     vnp_CreateDate: createDate,
   };
+  console.log("Received vnp_Params:", vnp_Params);
 
   if (bankCode !== "") {
     vnp_Params["vnp_BankCode"] = bankCode;
@@ -57,9 +60,10 @@ vnpayRouter.get("/create_payment_url", (req, res) => {
 
   vnp_Params = sortObject(vnp_Params);
 
+  vnp_Params = sortObject(vnp_Params); // Sắp xếp theo thứ tự alphabet
   let signData = qs.stringify(vnp_Params, { encode: false });
   let hmac = crypto.createHmac("sha512", secretKey);
-  let signed = hmac.update(new Buffer.from(signData, "utf-8")).digest("hex");
+  let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
   vnp_Params["vnp_SecureHash"] = signed;
 
   let paymentUrl = vnpUrl + "?" + qs.stringify(vnp_Params, { encode: false });
@@ -67,6 +71,8 @@ vnpayRouter.get("/create_payment_url", (req, res) => {
 });
 
 vnpayRouter.get("/vnpay_return", (req, res) => {
+  console.log("Received vnp_Params:", vnp_Params);
+
   let vnp_Params = req.query;
   let secureHash = vnp_Params["vnp_SecureHash"];
   delete vnp_Params["vnp_SecureHash"];
