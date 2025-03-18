@@ -23,25 +23,19 @@ function sortObject(obj) {
 
 // Endpoint tạo URL thanh toán
 vnpayRouter.get("/create_payment_url", (req, res) => {
-  let date = new Date();
   let ipAddr = req.ip;
-
   let tmnCode = config.vnp_TmnCode;
   let secretKey = config.vnp_HashSecret;
   let vnpUrl = config.vnp_Url;
   let returnUrl = config.vnp_ReturnUrl;
-  let orderId = moment(date).format("YYYYMMDDHHmmss");
+  let orderId = moment().format("YYYYMMDDHHmmss");
   let amount = req.query.amount;
   let bankCode = req.query.bankCode || "";
-  let createDate = moment(date).format("YYYYMMDDHHmmss");
+
+  let createDate = moment().format("YYYYMMDDHHmmss");
   let orderInfo = "Thanh_toan_don_hang";
   let locale = req.query.language || "vn";
   let currCode = "VND";
-
-  // Kiểm tra và xử lý amount
-  if (!amount || isNaN(amount)) {
-    return res.status(400).json({ message: "Amount không hợp lệ!" });
-  }
 
   let vnp_Params = {
     vnp_Version: "2.1.0",
@@ -52,7 +46,7 @@ vnpayRouter.get("/create_payment_url", (req, res) => {
     vnp_TxnRef: orderId,
     vnp_OrderInfo: orderInfo,
     vnp_OrderType: "billpayment",
-    vnp_Amount: Number(amount) * 100, // Nhân 100 theo chuẩn VNPay
+    vnp_Amount: amount * 100,
     vnp_ReturnUrl: returnUrl,
     vnp_IpAddr: ipAddr,
     vnp_CreateDate: createDate,
@@ -63,19 +57,13 @@ vnpayRouter.get("/create_payment_url", (req, res) => {
   }
 
   vnp_Params = sortObject(vnp_Params);
+
   let signData = qs.stringify(vnp_Params);
   let hmac = crypto.createHmac("sha512", secretKey);
   let signed = hmac.update(new Buffer.from(signData, "utf-8")).digest("hex");
   vnp_Params["vnp_SecureHash"] = signed;
 
-  // let paymentUrl = vnpUrl + "?" + signData;
-
-  // Chuyển object thành query string đúng chuẩn
-  const paymentUrl = `https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?${qs.stringify(
-    vnp_Params
-  )}`;
-  // console.log("Generated paymentUrl:", paymentUrl);
-
+  let paymentUrl = vnpUrl + "?" + qs.stringify(vnp_Params);
   res.json({ paymentUrl });
 });
 
