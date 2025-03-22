@@ -17,6 +17,8 @@ orderRouter.post("/", async (req, res) => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  console.log(totalAmount);
+
   const orderId = Date.now().toString();
   // Tạo đơn hàng trong database
   const order = await orderModel.create({
@@ -29,7 +31,7 @@ orderRouter.post("/", async (req, res) => {
   });
 
   const response = await axios.get(
-    `http://localhost:3000/create_payment_url?amout=${totalAmount}&orderId=${orderId}`,
+    `http://localhost:3000/create_payment_url?amount=${totalAmount}&orderId=${orderId}`,
     {
       headers: { "Content-Type": "application/json" },
     }

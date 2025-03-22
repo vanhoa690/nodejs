@@ -25,6 +25,8 @@ function sortObject(obj) {
 // Endpoint tạo URL thanh toán
 vnpayRouter.get("/create_payment_url", (req, res) => {
   let ipAddr = req.ip;
+  console.log(req.ip);
+
   let tmnCode = config.vnp_TmnCode;
   let secretKey = config.vnp_HashSecret;
   let vnpUrl = config.vnp_Url;
@@ -58,6 +60,7 @@ vnpayRouter.get("/create_payment_url", (req, res) => {
   }
 
   vnp_Params = sortObject(vnp_Params);
+  console.log({ vnp_Params });
 
   let signData = qs.stringify(vnp_Params);
   let hmac = crypto.createHmac("sha512", secretKey);
@@ -65,6 +68,7 @@ vnpayRouter.get("/create_payment_url", (req, res) => {
   vnp_Params["vnp_SecureHash"] = signed;
 
   let paymentUrl = vnpUrl + "?" + qs.stringify(vnp_Params);
+
   res.json({ paymentUrl });
 });
 
@@ -75,8 +79,8 @@ vnpayRouter.get("/vnpay_return", async (req, res) => {
   delete vnp_Params["vnp_SecureHash"];
   delete vnp_Params["vnp_SecureHashType"];
   vnp_Params = sortObject(vnp_Params);
-  const orderId = query.vnp_TxnRef;
-  const responseCode = query.vnp_ResponseCode;
+  const orderId = req.query.vnp_TxnRef;
+  const responseCode = req.query.vnp_ResponseCode;
 
   let secretKey = config.vnp_HashSecret;
   let signData = qs.stringify(vnp_Params);
@@ -87,7 +91,6 @@ vnpayRouter.get("/vnpay_return", async (req, res) => {
     return res.status(400).json({ message: "Dữ liệu không hợp lệ" });
   }
 
-  await order.save();
   // Cập nhật trạng thái đơn hàng
   const order = await orderModel.findOne({ orderId });
 
