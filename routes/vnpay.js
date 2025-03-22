@@ -2,6 +2,7 @@ import { Router } from "express";
 import moment from "moment";
 import qs from "querystring";
 import crypto from "crypto";
+import orderModel from "../models/orderModel";
 
 const vnpayRouter = Router();
 
@@ -28,7 +29,7 @@ vnpayRouter.get("/create_payment_url", (req, res) => {
   let secretKey = config.vnp_HashSecret;
   let vnpUrl = config.vnp_Url;
   let returnUrl = config.vnp_ReturnUrl;
-  let orderId = moment().format("YYYYMMDDHHmmss");
+  let orderId = req.query.orderId || moment().format("YYYYMMDDHHmmss");
   let amount = req.query.amount;
   let bankCode = req.query.bankCode || "";
 
@@ -68,23 +69,48 @@ vnpayRouter.get("/create_payment_url", (req, res) => {
 });
 
 // Endpoint xử lý phản hồi từ VNPay
-vnpayRouter.get("/vnpay_return", (req, res) => {
+vnpayRouter.get("/vnpay_return", async (req, res) => {
   let vnp_Params = req.query;
   let secureHash = vnp_Params["vnp_SecureHash"];
   delete vnp_Params["vnp_SecureHash"];
   delete vnp_Params["vnp_SecureHashType"];
   vnp_Params = sortObject(vnp_Params);
+  const orderId = query.vnp_TxnRef;
+  const responseCode = query.vnp_ResponseCode;
 
   let secretKey = config.vnp_HashSecret;
   let signData = qs.stringify(vnp_Params);
   let hmac = crypto.createHmac("sha512", secretKey);
   let signed = hmac.update(new Buffer.from(signData, "utf-8")).digest("hex");
 
-  if (secureHash === signed) {
-    res.json({ message: "Thanh toán thành công!", data: vnp_Params });
-  } else {
-    res.json({ message: "Thanh toán thất bại!" });
+  if (secureHash !== signed) {
+    return res.status(400).json({ message: "Dữ liệu không hợp lệ" });
   }
+
+  await order.save();
+  // Cập nhật trạng thái đơn hàng
+  const order = await orderModel.findOne({ orderId });
+
+  if (!order) {
+    return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+  }
+
+  if (responseCode === "00") {
+    order.status = "paid"; // Thanh toán thành công
+  } else {
+    order.status = "failed"; // Thanh toán thất bại
+  }
+  await order.save();
+  res.json({
+    message:
+      responseCode === "00" ? "Thanh toán thành công" : "Thanh toán thất bại",
+    order,
+  });
+  // if (secureHash === signed) {
+  //   res.json({ message: "Thanh toán thành công!", data: vnp_Params });
+  // } else {
+  //   res.json({ message: "Thanh toán thất bại!" });
+  // }
 });
 
 export default vnpayRouter;
