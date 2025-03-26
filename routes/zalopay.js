@@ -4,8 +4,8 @@ import axios from "axios";
 
 const zalopayRouter = Router();
 
-const ZALOPAY_APP_ID = 2553;
-const ZALOPAY_KEY1 = "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL";
+const ZALOPAY_APP_ID = 2554;
+const ZALOPAY_KEY1 = "sdngKKJmqEMzvh5QQcdD2A9XBSKUNaYn";
 const ZALOPAY_ENDPOINT = "https://sb-openapi.zalopay.vn/v2/create";
 
 // API Tạo đơn hàng thanh toán
@@ -27,8 +27,11 @@ zalopayRouter.post("/create_zalopay_order", async (req, res) => {
     const item = JSON.stringify([
       { name: "Test Product", price: amount, quantity: 1 },
     ]);
-    const embed_data = JSON.stringify({});
-    const callback_url = "http://localhost:3000/zalopay_return";
+    const callback_url =
+      "http://localhost:5173/payment-result?paymentMethod=zalopay";
+    const embed_data = JSON.stringify({ redirecturl: callback_url });
+    // const callback_url = "http://localhost:3000/zalopay_return";
+    console.log(embed_data);
 
     const orderData = {
       app_id: ZALOPAY_APP_ID,
@@ -39,8 +42,9 @@ zalopayRouter.post("/create_zalopay_order", async (req, res) => {
       item,
       embed_data,
       description: `Thanh toán đơn hàng #${app_trans_id}`,
-      callback_url,
-      bank_code: "CC",
+      // callback_url:
+      //   "https://5816-116-96-47-93.ngrok-free.app/payment-zalopay_return",
+      // bank_code: "CC",
     };
 
     // Tạo MAC
@@ -50,14 +54,14 @@ zalopayRouter.post("/create_zalopay_order", async (req, res) => {
       .update(dataMac)
       .digest("hex");
 
-    console.log("Dữ liệu gửi lên ZaloPay:", orderData);
+    // console.log("Dữ liệu gửi lên ZaloPay:", orderData);
 
     // Gửi request đến ZaloPay API
     const response = await axios.post(ZALOPAY_ENDPOINT, orderData, {
       headers: { "Content-Type": "application/json" },
     });
 
-    console.log("Response từ ZaloPay:", response.data);
+    // console.log("Response từ ZaloPay:", response.data);
     return res.json(response.data);
   } catch (error) {
     console.error(
@@ -68,9 +72,9 @@ zalopayRouter.post("/create_zalopay_order", async (req, res) => {
 });
 
 // API xử lý callback từ ZaloPay
-zalopayRouter.post("/zalopay_return", (req, res) => {
-  console.log("ZaloPay Callback Data:", req.body);
-  res.json({ message: "Callback received", data: req.body });
+zalopayRouter.get("/check_payment", (req, res) => {
+  console.log("ZaloPay Callback Data:", req.query);
+  res.json({ message: "Callback received", data: req.query });
 });
 
 export default zalopayRouter;
