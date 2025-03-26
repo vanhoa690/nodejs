@@ -4,8 +4,8 @@ import axios from "axios";
 
 const zalopayRouter = Router();
 
-const ZALOPAY_APP_ID = 554;
-const ZALOPAY_KEY1 = "8NdU5pG5R2spGHGhyO99HN1OhD8IQJBn";
+const ZALOPAY_APP_ID = 2553;
+const ZALOPAY_KEY1 = "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL";
 const ZALOPAY_ENDPOINT = "https://sb-openapi.zalopay.vn/v2/create";
 
 // API Tạo đơn hàng thanh toán
@@ -40,6 +40,7 @@ zalopayRouter.post("/create_zalopay_order", async (req, res) => {
       embed_data,
       description: `Thanh toán đơn hàng #${app_trans_id}`,
       callback_url,
+      bank_code: "CC",
     };
 
     // Tạo MAC
